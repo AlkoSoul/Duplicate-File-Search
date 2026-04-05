@@ -45,9 +45,6 @@ Function PauseMsg ($message) {
         Write-Host " "
         Start-Sleep -Seconds 1
         Write-Host "NOTE: Key pressed for you, as you are using Powershell ISE (This is not an error) ;)"
-        #Pop-up Message window code:
-        #Add-Type -AssemblyName System.Windows.Forms
-        #[System.Windows.Forms.MessageBox]::Show("$message")
     }
     else {
         Write-Host "$message" -ForegroundColor Yellow
@@ -57,19 +54,12 @@ Function PauseMsg ($message) {
 
 if ($opt -eq 1)
     {Write-Host " "
-    # getDrive($checkDrive)
     $myPath = getDrive
     Write-Host -NoNewline "Running a Quick Search for duplicate files in path: "
     Write-Host $myPath
     Write-Host "Press CTRL + BREAK to abort."
     Start-Sleep -Seconds 1
     Get-ChildItem -Recurse -File | Group-Object Name, Length | Where-Object { $_.Count -gt 1 } | Select-Object -ExpandProperty Group | Tee-Object -Variable RawData | Format-Table Name, FullName -Wrap | Out-File -FilePath .\Duplicates-Quick-Scan.txt; $RawData | Select-Object PSChildName, Directory, FullName, CreationTimeUtc, LastAccessTime | Export-Csv -Path .\Duplicates-Quick-Scan.csv -NoTypeInformation
-    #Get-ChildItem -Recurse -File | Group-Object Name, Length | Where-Object { $_.Count -gt 1 } | Select-Object -ExpandProperty Group | Tee-Object -Variable RawData | Format-Table Name, FullName -Wrap | Out-File -FilePath .\Duplicates-Quick-Scan.txt; $RawData | Export-Csv -Path .\Duplicates-Quick-Scan.csv -NoTypeInformation
-    #$Duplicates = Get-ChildItem -Recurse - File | Group-Object Name, Length | Where-Object { $_.Count -gt 1 } | Select-Object -ExpandProperty Group
-    #$Duplicates | Select-Object Name, FullName | Export-Csv -Path .\Quick-Duplicate-File-Check-Results.csv -NoTypeInformation
-    #$Duplicates | Format-Table Name, FullName -Wrap | Out-File -FilePath .\Quick-Duplicate-File-Check-Results.txt
-    
-    #Get-ChildItem -Recurse -File | Group-Object Name, Length | Where-Object { $_.Count -gt 1 } | Select-Object -ExpandProperty Group | Format-Table Name, FullName -Wrap | Out-File -FilePath .\Quick-Duplicate-File-Check-Results.txt | Export-Csv -Path .\Quick-Duplicate-File-Check-Results.csv
     #Get-Content -Path .\Quick-Duplicate-File-Check-Results.txt #Show results on screen
     Write-Host " "
     Write-Host "##########################" -ForegroundColor Black -BackgroundColor Green
@@ -99,12 +89,8 @@ if ($opt -eq 2)
     Write-Host "#    MANUALLY INCREASE CASE FAN SPEED TO COMPENSATE IF REQUIRED    #" -ForegroundColor White -BackgroundColor DarkRed
     Write-Host "####################################################################" -ForegroundColor White -BackgroundColor DarkRed
     Write-Host " "
-    Write-Host "Press CTRL + BREAK to abort."
-    
+    Write-Host "Press CTRL + BREAK to abort."    
     Get-ChildItem -Recurse -File | Group-Object { (Get-FileHash $_.FullName -Algorithm MD5).Hash } | Where-Object { $_.Count -gt 1 } | ForEach-Object { $_.Group } | Select-Object Name, FullName, Directory, @{N='Hash';E={(Get-FileHash $_.FullName -Algorithm MD5).Hash}}, CreationTimeUtc, LastAccessTime | Tee-Object -Variable RawData | Format-Table Name, Directory, FullName, Hash -Wrap | Out-File -FilePath .\Duplicates-Detailed-Scan.txt; $RawData | Select-Object Name, Directory, FullName, Hash, CreationTimeUtc, LastAccessTime | Export-Csv -Path .\Duplicates-Detailed-Scan.csv -NoTypeInformation
-
-    #Get-ChildItem -Recurse -File | Group-Object { (Get-FileHash $_.FullName -Algorithm MD5).Hash } | Where-Object { $_.Count -gt 1 } | ForEach-Object { $_.Group | Select-Object FullName, Hash } | Out-File -FilePath .\Detailed-Duplicate-File-Check-Results.txt
-    
     #Get-Content -Path .\Detailed-Duplicate-File-Check-Results.txt #Show results on screen
     Write-Host " "
     write-host "###########################" -ForegroundColor Black -BackgroundColor Green
